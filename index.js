@@ -22,7 +22,7 @@ function requireHTTPS(req, res, next) {
 }
 
 //app.use(requireHTTPS);
-app.use(express.static(path.join(__dirname, 'html')));
+app.use(express.static(path.join(__dirname, '/html')));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser())
 app.use(express.json());
@@ -31,23 +31,10 @@ app.use(session( {
     resave: false,
     saveUninitialized: false
 }));
-app.use('/user', user);
-app.use('/project', project);
-app.use('/project/task', task);
-app.use('/project/task/comment', comments);
-
-
-
-app.all('/', function(req, res) {
-    req.session.user = 1
-    res.json(req.session.user);
-})
-
-app.all('/3000', function(req, res) {
-    delete req.session.user;
-    res.json(req.session.user);
-})
-
+app.use('/', user);
+app.use('/login/project', project);
+app.use('/login/project/task', task);
+app.use('/login/project/task/comment', comments);
 
 
 app.listen(3000, function () {

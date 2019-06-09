@@ -1,6 +1,5 @@
 const orm = require('orm').connect('mysql://root:root@localhost/todolist');
-
-const modelProject = orm.define('project', {
+exports.modelProject = orm.define('project', {
     idproject: {type: 'serial', key: true},
     name: String,
     begin: String,

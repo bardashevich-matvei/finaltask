@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="./style.css" rel="stylesheet" type="text/css"/>
+    <title>Авторизация</title>
+</head>
+<body>
+    <h1 class="ToDolist">ToDoList</h1>
+    <center><input id="name" class="data" placeholder="name"/></center>
+    <center><input id="surname" class="data" placeholder="surname"/></center>
+    <center><input id="email" class="data" placeholder="email@mnail.com"/></center>
+    <center><input id="login" class="data" placeholder="login"/></center>
+    <center><input id="password" class="data" placeholder="password"/></center>
+    <center><button id="aush" class="but" type="button">Подтверждаю</button></center>
+    <center><button id="back" class="but" type="button">Назад</button></center>
+    <script>
+        const login = document.getElementById('login');
+        const back = document.getElementById('back');
+        const password = document.getElementById('password');
+        const aush = document.getElementById('aush');
+        aush.addEventListener('click', () => { 
+            fetch('/login', { method: 'POST', 
+                              credentials: 'include',
+                              headers: {'Content-Type': 'application/json'},
+                              body: JSON.stringify(json)})
+            .then((res) => {
+                if (res.status === 200) window.open('/login/project', '_self');
+                else alert('Неверный логие и/или пароль!')
+            })
+            .catch((err) => {
+                alert(err);
+            });
+        }); 
+        back.addEventListener('click', ()=> {
+            window.open('/', '_self');
+        });
+    </script>
+</body>
+</html>

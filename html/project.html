@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="/style.css" rel="stylesheet" type="text/css"/>
+    <title>Проекты</title>
+</head>
+<body>
+    <div class="main">
+        <button id="add" class="but" type="button">Создать проект</button>
+        <input id="create" class="data" placeholder="создай меня"/>
+        <button id="del" class="but" type="button">Удалить проект</button>
+        <input id="search" class="data" placeholder="удали меня"/>
+        <select id="list"></select>
+        <button id="exit" class="but">Выход</button>
+    </div>
+    <div>
+        <center><h1>Ваши проекты</h1></center>
+        <hr/>
+
+    </div>
+    <script>
+        const add = document.getElementById('add');
+        const exit = document.getElementById('exit');
+        const search = document.getElementById('search');
+        const del = document.getElementById('del');
+        const list = document.getElementById('list');
+        const arr = ['name', 'name213', 'qweqweq'];
+        function setCookie(name, value, options) {
+            options = options || {};
+
+            var expires = options.expires;
+
+            if (typeof expires == "number" && expires) {
+                var d = new Date();
+                d.setTime(d.getTime() + expires * 1000);
+                expires = options.expires = d;
+            }
+            if (expires && expires.toUTCString) {
+                options.expires = expires.toUTCString();
+            }
+
+            value = encodeURIComponent(value);
+
+            var updatedCookie = name + "=" + value;
+
+            for (var propName in options) {
+                updatedCookie += "; " + propName;
+                var propValue = options[propName];
+                if (propValue !== true) {
+                updatedCookie += "=" + propValue;
+                }
+            }
+
+            document.cookie = updatedCookie;
+        }
+        function deleteCookie(name) {
+            setCookie(name, "", {
+                expires: -1
+            })
+        }
+        function getCookie(name) {
+            var matches = document.cookie.match(new RegExp(
+                "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+            ));
+            return matches ? decodeURIComponent(matches[1]) : undefined;
+        }
+        add.addEventListener('click', () => {
+            let json = {
+                name: document.getElementById('create').value,
+                login: getCookie('login'),
+                password: getCookie('password'),
+            }
+            fetch('/login/project', { method: 'POST', 
+                              headers: {'Content-Type': 'application/json'},
+                              body: JSON.stringify(json)})
+            .then((res) => {
+                if (res.status === 200) {
+                    alert("Проект успешно создан");
+                    window.open('/login/project', '_self');
+                }
+                else alert('Возникла ошибка')
+            })
+            .catch((err) => {
+                alert(err);
+            });
+        });
+        function createOption(name) {
+            let op = document.createElement('option');
+            op.innerHTML = name;
+            list.appendChild(op);
+        };
+        search.addEventListener('input', (event) => {
+            setTimeout(() => {
+                list.innerHTML = "";
+                let name = document.getElementById('search').value;
+                for (let i=0; i<arr.length; i++) {
+                    if (!arr[i].indexOf(name)) createOption(arr[i]); 
+                };
+            }, 300);
+        });
+        del.addEventListener('click', () => {
+            let json = {
+                name: document.getElementById('search').value,
+                login: getCookie('login'),
+                password: getCookie('password'),
+            }
+            fetch('/login/project', { method: 'DELETE', 
+                                      credentials: 'include',
+                                      headers: {'Content-Type': 'application/json'},
+                                      body: JSON.stringify(json)})
+            .then((res) => {
+                if (res.status === 200) window.open('/login/project', '_self');
+                else alert('Произошла ошибка')
+            })  
+            .catch((err) => {
+                alert(err);
+            });
+        });
+        exit.addEventListener('click', ()=> {
+            deleteCookie('password');
+            deleteCookie('login');
+            window.open("/", '_self');
+        });
+    </script>
+</body>
+</html>

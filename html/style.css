@@ -1,0 +1,24 @@
+.ToDolist {
+    font-size: 13em;
+    text-align: center;
+    margin-bottom: 0.2em;
+}
+
+.but {
+    background-color: blueviolet;
+    color: aquamarine;
+    height: 5em;
+    width: 8em;
+    border-radius: 2em;
+    margin: 1em 0 1em 0;
+}
+
+.data {
+    margin: 0.5em 0 0.5em 0;
+    border: 1.5px solid black;
+}
+
+.main {
+    width: 99%;
+    text-align: center;
+}
