@@ -6,12 +6,13 @@ const dirname = path.join(__dirname, '..' , 'html');
 
 router.post('/', projectController.addProject);
 
-router.put('/', projectController.updateProject);
+router.get('/allMy', projectController.getProjectAllMy);
 
-router.delete('/login/project', projectController.deleteProject);
+router.delete('/', projectController.deleteProject);
 
+router.get('/allUsers', projectController.getProjectAllUsers);
 
-router.get('', function(req, res) {
+router.get('/', function(req, res) {
     res.sendFile(path.join(dirname, 'project.html'));
 });
 

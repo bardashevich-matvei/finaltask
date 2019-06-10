@@ -22,3 +22,29 @@
     width: 99%;
     text-align: center;
 }
+
+.rightSide {
+    text-align: right;
+}
+
+#message {
+    height: 7em;
+    width: 30em;
+    font-size: 1.5em;
+}
+
+.comment {
+    margin: 1em auto 1em auto;
+    height: 5em;
+    width: 40em;
+    border: 1px solid black;
+    background-color: aquamarine;
+}
+
+.comment p:first-child {
+    text-align: center;
+}
+
+.comment p:last-child {
+    text-align: right;
+}

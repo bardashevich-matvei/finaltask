@@ -1,14 +1,29 @@
 const express = require('express');
 const router = express.Router();
 const taskController = require('../controllers/task');
+const path = require("path");
+const dirname = path.join(__dirname, '..' , 'html');
 
-router.post('/login/project/task', taskController.addTask);
+router.post('/', taskController.addTask);
 
-router.put('/login/project/task', taskController.updateTask);
+router.post('/user', taskController.addUser);
 
-router.delete('/login/project/task', taskController.deleteTask);
+router.put('/', taskController.updateTask);
 
-router.get('/login/project/task', taskController.getTask);
+router.delete('/', taskController.deleteTask);
+
+router.delete('/user', taskController.deleteUser);
+
+router.get('/allUsers', taskController.getTaskAllUsers);
+
+router.get('/allProjectUsers', taskController.getTaskAllProjectUsers);
+
+router.get('/allTasks', taskController.getTaskAllTasks);
+
+
+router.get('/', function(req, res) {
+    res.sendFile(path.join(dirname, 'task.html'));
+});
 
 
 module.exports = router;

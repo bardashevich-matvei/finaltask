@@ -34,7 +34,7 @@ app.use(session( {
 app.use('/', user);
 app.use('/login/project', project);
 app.use('/login/project/task', task);
-app.use('/login/project/task/comment', comments);
+app.use('/login/project/task/comments', comments);
 
 
 app.listen(3000, function () {

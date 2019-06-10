@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="/style.css" rel="stylesheet" type="text/css"/> 
+    <title>Задачи</title>
+</head>
+<body>
+    <div class="main">
+        <button id="add" class="but" type="button">Создать задачу</button>
+        <input id="create" class="data" placeholder="создай меня"/>
+        <button id="del" class="but" type="button">Выполнить задачу</button>
+        <input id="search" class="data" placeholder="выполни меня"/>
+        <select id="list"></select>
+        <button id="add_user" class="but" type="button">Добавить разработчика</button>
+        <input id="user_search" class="data" placeholder="добавь меня"/>
+        <select id="list2"></select>
+        <button id="del_user" class="but" type="button">Уволить разработчика</button>
+        <input id="del_user_search" class="data" placeholder="уволь меня"/>
+        <select id="list3"></select>
+        <button id="exit" class="but">Выход</button>
+        <button id="back" class="but">Назад</button>
+    </div>
+    <div id="curent">
+        <center><h1 id="project"></h1></center>
+        <center><h2>Текущие задачи</h1></center>
+        <hr/>
+
+    </div>
+    <div id="finish">
+        <center><h2>Завершённые задачи</h1></center>
+        <hr/>
+    </div>
+    <script>
+        const list3 = document.getElementById('list3');
+        const del_user = document.getElementById('del_user');
+        const del_user_search = document.getElementById('del_user_search');
+
+        const add = document.getElementById('add');
+        const add_user = document.getElementById('add_user');
+        const back = document.getElementById('back');
+        const exit = document.getElementById('exit');
+        const search = document.getElementById('search');
+        const user_search = document.getElementById('user_search');
+        const del = document.getElementById('del');
+        const list = document.getElementById('list');
+        const curent = document.getElementById('curent');
+        
+        document.getElementById('project').innerHTML = getCookie('project');
+        let arr = [], arr2 = [], arr3 = [];
+        function setCookie(name, value, options) {
+            options = options || {};
+
+            var expires = options.expires;
+
+            if (typeof expires == "number" && expires) {
+                var d = new Date();
+                d.setTime(d.getTime() + expires * 1000);
+                expires = options.expires = d;
+            }
+            if (expires && expires.toUTCString) {
+                options.expires = expires.toUTCString();
+            }
+
+            value = encodeURIComponent(value);
+
+            var updatedCookie = name + "=" + value;
+
+            for (var propName in options) {
+                updatedCookie += "; " + propName;
+                var propValue = options[propName];
+                if (propValue !== true) {
+                updatedCookie += "=" + propValue;
+                }
+            }
+
+            document.cookie = updatedCookie;
+        }
+        function deleteCookie(name) {
+            setCookie(name, "", {
+                expires: -1
+            })
+        }
+        function getCookie(name) {
+            var matches = document.cookie.match(new RegExp(
+                "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+            ));
+            return matches ? decodeURIComponent(matches[1]) : undefined;
+        }
+        
+        fetch('/login/project/task/allUsers', { method: 'GET', headers: {'Content-Type': 'application/json', 'login': getCookie('login'), 'password': getCookie('password'), 'project': getCookie('project')}})
+        .then((res) => res.json())
+        .then((data) => {
+            data = JSON.parse(data);
+            console.log(data);
+            for (let i=0; i<data.arr.length; i++) {
+                arr2.push(data.arr[i].login);
+            }
+        })
+        .catch((err) => {
+            alert(err);
+        });
+
+        fetch('/login/project/task/allProjectUsers', { method: 'GET', headers: {'Content-Type': 'application/json', 'login': getCookie('login'), 'password': getCookie('password'), 'project': getCookie('project')}})
+        .then((res) => res.json())
+        .then((data) => {
+            data = JSON.parse(data);
+            for (let i=0; i<data.arr.length; i++) {
+                arr3.push(data.arr[i].login);
+            }
+        })
+        .catch((err) => {
+            alert(err);
+        });
+
+        fetch('/login/project/task/allTasks', { method: 'GET', headers: {'Content-Type': 'application/json', 'login': getCookie('login'), 'password': getCookie('password'), 'project': getCookie('project'),}})
+        .then((res) => res.json())
+        .then((data) => {
+            data = JSON.parse(data);    
+            for (let i=0; i<data.result3.length; i++) {
+                arr.push(data.result3[i]);
+                if (data.result3[i].end.length === 0) createTask(arr[i].name);
+                else createFinishTask(arr[i].name);
+            }
+        })
+        .catch((err) => {
+            alert(err);
+        });
+        function createTask(name){
+            let b = document.createElement('button');
+            b.classList.add('but');
+            b.innerHTML = name;
+            b.addEventListener('click', () => {
+                setCookie('task', name);
+                window.open('/login/project/task/comments', '_self');
+            });
+            curent.appendChild(b);
+        };
+
+        function createFinishTask(name){
+            let b = document.createElement('button');
+            b.classList.add('but');
+            b.innerHTML = name;
+            b.addEventListener('click', () => {
+                setCookie('task', name);
+                window.open('/login/project/task/comments', '_self');
+            });
+            finish.appendChild(b);
+        };
+
+        add_user.addEventListener('click', () => {
+            let json = {
+                login: document.getElementById('create').value,
+                project: getCookie('project')
+            }
+            fetch('/login/project/task/user', { method: 'POST', 
+                              headers: {'Content-Type': 'application/json'},
+                              body: JSON.stringify(json)})
+            .then((res) => {
+                if (res.status === 200) {
+                    alert("Разработчик добавен успешно успешно добавлена");
+                    window.open('/login/project/task', '_self');
+                }
+                else alert('Возникла ошибка')
+            })
+            .catch((err) => {
+                alert(err);
+            });
+        });
+
+        add.addEventListener('click', () => {
+            let json = {
+                name: document.getElementById('create').value,
+                login: getCookie('login'),
+                password: getCookie('password'),
+                project: getCookie('project')
+            }
+            fetch('/login/project/task', { method: 'POST', 
+                              headers: {'Content-Type': 'application/json'},
+                              body: JSON.stringify(json)})
+            .then((res) => {
+                if (res.status === 200) {
+                    alert("Задача успешно добавлена");
+                    window.open('/login/project/task', '_self');
+                }
+                else alert('Возникла ошибка')
+            })
+            .catch((err) => {
+                alert(err);
+            });
+        });
+        function createOption(name) {
+            let op = document.createElement('option');
+            op.innerHTML = name;
+            list.appendChild(op);
+        };
+        function createOption2(name) {
+            let op = document.createElement('option');
+            op.innerHTML = name;
+            list2.appendChild(op);
+        };
+        function createOption3(name) {
+            let op = document.createElement('option');
+            op.innerHTML = name;
+            list3.appendChild(op);
+        };
+        search.addEventListener('input', (event) => {
+            setTimeout(() => {
+                list.innerHTML = "";
+                let name = document.getElementById('search').value;
+                for (let i=0; i<arr.length; i++) {
+                    if (!arr[i].name.indexOf(name) && arr[i].end.length === 0) createOption(arr[i].name); 
+                };
+            }, 300);
+        });
+        user_search.addEventListener('input', (event) => {
+            setTimeout(() => {
+                list2.innerHTML = "";
+                let name = document.getElementById('user_search').value;
+                for (let i=0; i<arr2.length; i++) {
+                    if (!arr2[i].indexOf(name)) createOption2(arr2[i]); 
+                };
+            }, 300);
+        });
+
+        del_user_search.addEventListener('input', (event) => {
+            setTimeout(() => {
+                list3.innerHTML = "";
+                let name = document.getElementById('user_search').value;
+                for (let i=0; i<arr3.length; i++) {
+                    if (!arr3[i].indexOf(name)) createOption3(arr3[i]); 
+                };
+            }, 300);
+        });
+        del.addEventListener('click', () => {
+            let json = {
+                name: document.getElementById('search').value
+            }
+            fetch('/login/project/task', { method: 'DELETE', 
+                                      credentials: 'include',
+                                      headers: {'Content-Type': 'application/json'},
+                                      body: JSON.stringify(json)})
+            .then((res) => {
+                if (res.status === 200) window.open('/login/project/task', '_self');
+                else alert('Произошла ошибка')
+            })  
+            .catch((err) => {
+                alert(err);
+            });
+        });
+        del_user.addEventListener('click', () => {
+            let json = {
+                login: document.getElementById('del_user_search').value,
+                project: getCookie('project')
+            }
+            fetch('/login/project/task/user', { method: 'DELETE', 
+                                      credentials: 'include',
+                                      headers: {'Content-Type': 'application/json'},
+                                      body: JSON.stringify(json)})
+            .then((res) => {
+                if (res.status === 200) window.open('/login/project/task', '_self');
+                else alert('Произошла ошибка')
+            })  
+            .catch((err) => {
+                alert(err);
+            });
+        });
+
+        exit.addEventListener('click', ()=> {
+            deleteCookie('password');
+            deleteCookie('login');
+            deleteCookie('project');
+            window.open("/", '_self');
+        });
+        back.addEventListener('click', ()=> {
+            deleteCookie('project');
+            window.open("/login/project", '_self');
+        });
+    </script>
+</body>
+</html>

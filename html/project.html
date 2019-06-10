@@ -11,23 +11,50 @@
     <div class="main">
         <button id="add" class="but" type="button">Создать проект</button>
         <input id="create" class="data" placeholder="создай меня"/>
-        <button id="del" class="but" type="button">Удалить проект</button>
-        <input id="search" class="data" placeholder="удали меня"/>
+        <button id="del" class="but" type="button">Закрыть проект</button>
+        <input id="search" class="data" placeholder="закрой меня"/>
         <select id="list"></select>
         <button id="exit" class="but">Выход</button>
     </div>
-    <div>
+    <div id="space">
         <center><h1>Ваши проекты</h1></center>
         <hr/>
 
     </div>
     <script>
+        const add_user = document.getElementById('add_user');
+        const list2 = document.getElementById('list2');
+        const user_search = document.getElementById('user_search');        
         const add = document.getElementById('add');
         const exit = document.getElementById('exit');
         const search = document.getElementById('search');
         const del = document.getElementById('del');
         const list = document.getElementById('list');
-        const arr = ['name', 'name213', 'qweqweq'];
+        const space = document.getElementById('space');
+        let arr = [], arr2 = [];
+        function createProject(name){
+            let b = document.createElement('button');
+            b.classList.add('but');
+            b.innerHTML = name;
+            b.addEventListener('click', () => {
+                setCookie('project', name);
+                window.open('/login/project/task', '_self');
+            });
+            space.appendChild(b);
+        }
+        fetch('/login/project/allMy', { method: 'GET', headers: {'Content-Type': 'application/json', 'login': getCookie('login'), 'password': getCookie('password')}})
+        .then((res) => res.json())
+        .then((data) => {
+            data = JSON.parse(data);
+            for (let i=0; i<data.arr.length; i++) {
+                arr.push(data.arr[i].name);
+                createProject(arr[i]);
+            }
+        })
+        .catch((err) => {
+            alert(err);
+        });
+        
         function setCookie(name, value, options) {
             options = options || {};
 
@@ -67,6 +94,7 @@
             ));
             return matches ? decodeURIComponent(matches[1]) : undefined;
         }
+        
         add.addEventListener('click', () => {
             let json = {
                 name: document.getElementById('create').value,
@@ -105,9 +133,9 @@
             let json = {
                 name: document.getElementById('search').value,
                 login: getCookie('login'),
-                password: getCookie('password'),
+                password: getCookie('password')
             }
-            fetch('/login/project', { method: 'DELETE', 
+            fetch('/login/project/', { method: 'DELETE', 
                                       credentials: 'include',
                                       headers: {'Content-Type': 'application/json'},
                                       body: JSON.stringify(json)})
