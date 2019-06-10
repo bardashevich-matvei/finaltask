@@ -3,17 +3,21 @@ const path = require("path");
 const dirname = path.join(__dirname, '..' , 'html');
 
 exports.addUser = function(req, res) {
-    User.create({ name: req.body.name, surname: req.body.surname, email: req.body.email, login:  req.body.login, password: req.body.password}, function(err, result){ 
+    User.find({ login: req.body.login}, function(err, result2) {
         if (err) {
             console.log(err);
             res.json(err);
-        } else res.sendFile(path.join(dirname, 'login.html'));
+        } else if (result2.length>0) res.status(500).json();
+        else 
+        User.create({ name: req.body.name, surname: req.body.surname, email: req.body.email, login:  req.body.login, password: req.body.password}, function(err, result){ 
+            if (err) {
+                console.log(err);
+                res.json(err);
+            } else res.sendFile(path.join(dirname, 'login.html'));
+        });
     });
 };
 
-exports.updateUser = function(req, res) {
-
-};
 
 exports.deleteUser = function(req, res) {
 

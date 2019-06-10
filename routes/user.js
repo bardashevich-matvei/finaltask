@@ -12,6 +12,7 @@ router.get('/registration', function(req, res) {
     res.sendFile(path.join(dirname, 'registration.html'));
 })
 
+
 router.post('/registration', userController.addUser);
 
 router.get('/login', function (req, res) {

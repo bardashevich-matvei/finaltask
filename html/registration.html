@@ -17,22 +17,70 @@
     <center><button id="aush" class="but" type="button">Подтверждаю</button></center>
     <center><button id="back" class="but" type="button">Назад</button></center>
     <script>
-        const login = document.getElementById('login');
         const back = document.getElementById('back');
-        const password = document.getElementById('password');
         const aush = document.getElementById('aush');
+        function setCookie(name, value, options) {
+            options = options || {};
+
+            var expires = options.expires;
+
+            if (typeof expires == "number" && expires) {
+                var d = new Date();
+                d.setTime(d.getTime() + expires * 1000);
+                expires = options.expires = d;
+            }
+            if (expires && expires.toUTCString) {
+                options.expires = expires.toUTCString();
+            }
+
+            value = encodeURIComponent(value);
+
+            var updatedCookie = name + "=" + value;
+
+            for (var propName in options) {
+                updatedCookie += "; " + propName;
+                var propValue = options[propName];
+                if (propValue !== true) {
+                updatedCookie += "=" + propValue;
+                }
+            }
+
+            document.cookie = updatedCookie;
+        }
+        
+        function checkEmail(s){
+            let reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+            if(reg.test(s) == false || s.length === 0) {
+                return false;
+            } else return true;
+        };
+
         aush.addEventListener('click', () => { 
-            fetch('/login', { method: 'POST', 
-                              credentials: 'include',
-                              headers: {'Content-Type': 'application/json'},
-                              body: JSON.stringify(json)})
-            .then((res) => {
-                if (res.status === 200) window.open('/login/project', '_self');
-                else alert('Неверный логие и/или пароль!')
-            })
-            .catch((err) => {
-                alert(err);
-            });
+            if (checkEmail(document.getElementById('email').value) && document.getElementById('password').value.length>0 && document.getElementById('name').value.length>0 && document.getElementById('surname').value.length>0 && document.getElementById('login').value.length>0){
+                let json = {
+                login: document.getElementById('login').value,
+                password: document.getElementById('password').value,
+                name: document.getElementById('name').value,
+                surname: document.getElementById('surname').value,
+                email: document.getElementById('email').value,
+            }
+                fetch('/registration', { method: 'POST', 
+                                credentials: 'include',
+                                headers: {'Content-Type': 'application/json'},
+                                body: JSON.stringify(json)})
+                .then((res) => {
+                    if (res.status === 200) {
+                        setCookie('login', json.login);
+                        setCookie('password', json.password);
+                        window.open('/login/project', '_self');
+                    }
+                    else alert('Введены неверыне данные. Возможно такой логин уже занят')
+                })
+                .catch((err) => {
+                    alert(err);
+                });
+            } else alert("Введены неверыне данные: Email должен иметь вид example@example.com и все поля должны быть заполнены");
+            
         }); 
         back.addEventListener('click', ()=> {
             window.open('/', '_self');

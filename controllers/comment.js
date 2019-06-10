@@ -24,7 +24,15 @@ exports.addComment = function(req, res) {
                         if (err) {
                             console.log(err);
                             res.json(err);
-                        } else res.status(200).json();
+                        } else {
+                            result.priority += 1;
+                            result.save(() => {
+                                if (err) {
+                                    console.log(err);
+                                    res.json(err);
+                                } else res.status(200).json();
+                            });
+                        }
                     })
                 }
             });

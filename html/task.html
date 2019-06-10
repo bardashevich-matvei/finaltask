@@ -121,7 +121,7 @@
             data = JSON.parse(data);    
             for (let i=0; i<data.result3.length; i++) {
                 arr.push(data.result3[i]);
-                if (data.result3[i].end.length === 0) createTask(arr[i].name);
+                if (data.result3[i].end.length === 0) createTask(arr[i]);
                 else createFinishTask(arr[i].name);
             }
         })
@@ -131,7 +131,7 @@
         function createTask(name){
             let b = document.createElement('button');
             b.classList.add('but');
-            b.innerHTML = name;
+            b.innerHTML = name.name + '(' + name.priority + ')';
             b.addEventListener('click', () => {
                 setCookie('task', name);
                 window.open('/login/project/task/comments', '_self');

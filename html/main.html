@@ -10,15 +10,15 @@
 <body>
     <h1 class="ToDolist">ToDoList</h1>
     <center><button id="login" class="but" type="button">Вход</button></center>
-    <center><button id="logout" class ="but" type="button">Регистрация</button></center>
+    <center><button id="registration" class ="but" type="button">Регистрация</button></center>
     <script>
         const login = document.getElementById('login');
-        const logout = document.getElementById('logout');
+        const registration = document.getElementById('registration');
         login.addEventListener('click', () => {
             window.open('/login', '_self');
         });
-        logout.addEventListener('click', () => {
-            window.open('/logout', '_self');
+        registration.addEventListener('click', () => {
+            window.open('/registration', '_self');
         });
     </script>
 </body>

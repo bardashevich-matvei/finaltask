@@ -33,7 +33,14 @@ exports.deleteProject = function(req, res) {
         if (err) {
             console.log(err);
             res.json(err);
-        } else res.status(200).json();
+        } else {
+            result2.remove((err) => {
+                if (err) {
+                    console.log(err);
+                    res.json(err);
+                } else res.status(200).json();
+            });
+        }
     });
 };
 
